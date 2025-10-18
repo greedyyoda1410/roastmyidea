@@ -1,0 +1,15 @@
+# Test files use CommonJS
+tests/
+*.test.js
+*.test.ts
+
+# Build output
+.next/
+out/
+dist/
+
+# Dependencies
+node_modules/
+
+# Drizzle migrations
+drizzle/
