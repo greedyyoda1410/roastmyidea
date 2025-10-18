@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import IdeaInput from '@/components/IdeaInput';
 import ProjectNameInput from '@/components/ProjectNameInput';
+import FileUpload from '@/components/FileUpload';
 import ToneMatrix from '@/components/ToneMatrix';
 import ErrorDisplay from '@/components/ErrorDisplay';
 import JudgeCard from '@/components/JudgeCard';
@@ -15,6 +16,10 @@ export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [projectName, setProjectName] = useState('');
   const [idea, setIdea] = useState('');
+  const [files, setFiles] = useState<{ pitchDeck: File | null; demoImages: File[] }>({
+    pitchDeck: null,
+    demoImages: []
+  });
   const [tone, setTone] = useState<ToneMatrixType>({ humor: 0.7, sarcasm: 0.2 });
   const [isProjectNameValid, setIsProjectNameValid] = useState(false);
   const [isIdeaValid, setIsIdeaValid] = useState(false);
@@ -39,7 +44,8 @@ export default function Home() {
     setVisibleJudges(0);
     
     try {
-      const response = await fetch('/api/roast', {
+      // Step 1: Create initial roast to get ID
+      const initialResponse = await fetch('/api/roast', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -48,21 +54,42 @@ export default function Home() {
           projectName,
           idea, 
           tone,
-          userId: user?.id || null
+          userId: user?.id || null,
+          filesAttached: files.pitchDeck !== null || files.demoImages.length > 0
         }),
       });
 
-      const data = await response.json();
+      const roastData = await initialResponse.json();
 
-      if (!response.ok) {
-        setError(data.error || 'GENERIC');
+      if (!initialResponse.ok) {
+        setError(roastData.error || 'GENERIC');
         return;
       }
 
-      setRoastResult(data.roast);
+      // Step 2: Upload files if any (in background while judges work)
+      if (files.pitchDeck || files.demoImages.length > 0) {
+        const fileFormData = new FormData();
+        fileFormData.append('roastId', roastData.roast.id);
+        
+        if (files.pitchDeck) {
+          fileFormData.append('pitchDeck', files.pitchDeck);
+        }
+        
+        files.demoImages.forEach((image) => {
+          fileFormData.append('images', image);
+        });
+
+        // Upload files in background (don't wait)
+        fetch('/api/upload', {
+          method: 'POST',
+          body: fileFormData,
+        }).catch(err => console.error('File upload error:', err));
+      }
+
+      setRoastResult(roastData.roast);
       
       // Sequentially reveal judges with animation
-      const judgeCount = data.roast.judges.length;
+      const judgeCount = roastData.roast.judges.length;
       for (let i = 0; i < judgeCount; i++) {
         setTimeout(() => {
           setVisibleJudges(i + 1);
@@ -135,6 +162,9 @@ export default function Home() {
                 onChange={setIdea}
                 onValidationChange={setIsIdeaValid}
               />
+
+              {/* File Upload */}
+              <FileUpload onFilesChange={setFiles} />
 
               {/* Tone Matrix */}
               <div className="flex justify-center">
