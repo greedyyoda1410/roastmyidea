@@ -38,31 +38,161 @@
   --danger: #FF453A;
   --success: #FFD60A;
   --warning: #FF9500;
+  
+  /* Background gradient */
+  background: radial-gradient(ellipse at top, rgba(255, 214, 10, 0.1) 0%, transparent 50%),
+              radial-gradient(ellipse at bottom, rgba(255, 149, 0, 0.05) 0%, transparent 50%);
 }
 
-/* Default to Terminal theme */
+/* Spotlight glow effect */
+.theme-gameshow .spotlight-glow {
+  box-shadow: 0 0 40px rgba(255, 214, 10, 0.4),
+              0 0 80px rgba(255, 214, 10, 0.2),
+              0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Bold shadows for depth */
+.theme-gameshow .bold-shadow {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6),
+              0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Pulse animation for CTAs */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 214, 10, 0.5);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(255, 214, 10, 0.8), 0 0 60px rgba(255, 149, 0, 0.4);
+    transform: scale(1.02);
+  }
+}
+
+.theme-gameshow .pulse-cta {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Flip-board number animation */
+@keyframes flip-in {
+  0% {
+    transform: rotateX(-90deg);
+    opacity: 0;
+  }
+  50% {
+    transform: rotateX(-45deg);
+  }
+  100% {
+    transform: rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+.theme-gameshow .flip-animation {
+  animation: flip-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transform-origin: top center;
+}
+
+/* Bounce animation with ease-out-back */
+@keyframes bounce-in {
+  0% {
+    transform: scale(0.3) translateY(-50px);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.theme-gameshow .bounce-in {
+  animation: bounce-in 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Spotlight circle for tone matrix */
+.theme-gameshow .spotlight-circle {
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 214, 10, 0.6) 0%,
+    rgba(255, 214, 10, 0.4) 30%,
+    rgba(255, 149, 0, 0.2) 60%,
+    transparent 100%
+  );
+  filter: blur(20px);
+  pointer-events: none;
+}
+
+/* Stage floor grid */
+.theme-gameshow .stage-floor {
+  background: 
+    linear-gradient(0deg, rgba(255, 214, 10, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 214, 10, 0.1) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center;
+}
+
+/* Particle sparkle animation */
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(180deg);
+  }
+}
+
+.theme-gameshow .sparkle {
+  animation: sparkle 1.5s ease-in-out infinite;
+}
+
+/* Score meter fill with bounce */
+@keyframes fill-bounce {
+  0% {
+    width: 0;
+    transform: scaleY(1);
+  }
+  70% {
+    transform: scaleY(1.2);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+.theme-gameshow .score-fill {
+  animation: fill-bounce 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Radial highlight */
+.theme-gameshow .radial-highlight {
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 214, 10, 0.2) 0%,
+    transparent 70%
+  );
+}
+
+/* Glowing text effect */
+.theme-gameshow .glow-text {
+  text-shadow: 0 0 10px rgba(255, 214, 10, 0.5),
+               0 0 20px rgba(255, 214, 10, 0.3),
+               0 0 30px rgba(255, 149, 0, 0.2);
+}
+
+/* Default to Terminal theme - moved to end to avoid overriding theme classes */
+
+/* Tailwind theme variables - removed to prevent overriding custom theme variables */
+
+/* Font variables */
 :root {
-  --bg: #1A1A1A;
-  --surface: #111111;
-  --text: #FAFAFA;
-  --muted: #9CA3AF;
-  --accent: #00FF9D;
-  --accent-2: #FF61F6;
-  --danger: #FF3B30;
-  --success: #00FF9D;
-  --warning: #FFD60A;
-}
-
-@theme inline {
-  --color-background: var(--bg);
-  --color-foreground: var(--text);
-  --color-surface: var(--surface);
-  --color-muted: var(--muted);
-  --color-accent: var(--accent);
-  --color-accent-2: var(--accent-2);
-  --color-danger: var(--danger);
-  --color-success: var(--success);
-  --color-warning: var(--warning);
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'IBM Plex Mono', monospace;
 }
@@ -174,4 +304,41 @@ body {
 
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out;
+}
+
+/* Screen reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.focus\:not-sr-only:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Default to Terminal theme - fallback only */
+:root {
+  --bg: #1A1A1A;
+  --surface: #111111;
+  --text: #FAFAFA;
+  --muted: #9CA3AF;
+  --accent: #00FF9D;
+  --accent-2: #FF61F6;
+  --danger: #FF3B30;
+  --success: #00FF9D;
+  --warning: #FFD60A;
 }

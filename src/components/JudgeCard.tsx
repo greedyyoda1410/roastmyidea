@@ -28,9 +28,9 @@ export default function JudgeCard({ name, response, isVisible }: JudgeCardProps)
 
   return (
     <div className={`
-      bg-surface/80 border border-muted-foreground/20 rounded-2xl p-6
-      transition-all duration-500 transform
-      ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
+      bg-surface/80 border-4 border-accent/30 rounded-3xl p-8
+      transition-all duration-500 transform bold-shadow
+      ${isVisible ? 'opacity-100 translate-y-0 bounce-in' : 'opacity-0 translate-y-4'}
     `}>
       {/* Judge Header */}
       <div className="flex items-center justify-between mb-4">
@@ -45,63 +45,63 @@ export default function JudgeCard({ name, response, isVisible }: JudgeCardProps)
         </div>
       </div>
 
-      {/* Scores */}
+      {/* Scores with flip animation */}
       <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="space-y-2">
+        <div className="space-y-2 flip-animation" style={{ animationDelay: '0.1s' }}>
           <div className="flex justify-between items-center">
-            <span className="text-sm text-muted-foreground">Originality</span>
-            <span className={`font-mono font-semibold ${getScoreColor(response.scores.originality)}`}>
+            <span className="text-sm font-bold text-muted-foreground">💡 ORIGINALITY</span>
+            <span className={`font-mono text-xl font-bold ${getScoreColor(response.scores.originality)} glow-text`}>
               {response.scores.originality}/10
             </span>
           </div>
-          <div className="w-full bg-muted-foreground/20 rounded-full h-2">
+          <div className="w-full bg-muted-foreground/20 rounded-full h-3 overflow-hidden">
             <div 
-              className="bg-accent h-2 rounded-full transition-all duration-1000"
+              className="bg-gradient-to-r from-accent to-accent-2 h-3 rounded-full score-fill"
               style={{ width: `${(response.scores.originality / 10) * 100}%` }}
             />
           </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 flip-animation" style={{ animationDelay: '0.2s' }}>
           <div className="flex justify-between items-center">
-            <span className="text-sm text-muted-foreground">Feasibility</span>
-            <span className={`font-mono font-semibold ${getScoreColor(response.scores.feasibility)}`}>
+            <span className="text-sm font-bold text-muted-foreground">⚙️ FEASIBILITY</span>
+            <span className={`font-mono text-xl font-bold ${getScoreColor(response.scores.feasibility)} glow-text`}>
               {response.scores.feasibility}/10
             </span>
           </div>
-          <div className="w-full bg-muted-foreground/20 rounded-full h-2">
+          <div className="w-full bg-muted-foreground/20 rounded-full h-3 overflow-hidden">
             <div 
-              className="bg-accent h-2 rounded-full transition-all duration-1000"
+              className="bg-gradient-to-r from-accent to-accent-2 h-3 rounded-full score-fill"
               style={{ width: `${(response.scores.feasibility / 10) * 100}%` }}
             />
           </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 flip-animation" style={{ animationDelay: '0.3s' }}>
           <div className="flex justify-between items-center">
-            <span className="text-sm text-muted-foreground">Wow Factor</span>
-            <span className={`font-mono font-semibold ${getScoreColor(response.scores.wow_factor)}`}>
+            <span className="text-sm font-bold text-muted-foreground">⚡ WOW FACTOR</span>
+            <span className={`font-mono text-xl font-bold ${getScoreColor(response.scores.wow_factor)} glow-text`}>
               {response.scores.wow_factor}/10
             </span>
           </div>
-          <div className="w-full bg-muted-foreground/20 rounded-full h-2">
+          <div className="w-full bg-muted-foreground/20 rounded-full h-3 overflow-hidden">
             <div 
-              className="bg-accent h-2 rounded-full transition-all duration-1000"
+              className="bg-gradient-to-r from-accent to-accent-2 h-3 rounded-full score-fill"
               style={{ width: `${(response.scores.wow_factor / 10) * 100}%` }}
             />
           </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 flip-animation" style={{ animationDelay: '0.4s' }}>
           <div className="flex justify-between items-center">
-            <span className="text-sm text-muted-foreground">Market Potential</span>
-            <span className={`font-mono font-semibold ${getScoreColor(response.scores.market_potential)}`}>
+            <span className="text-sm font-bold text-muted-foreground">💰 MARKET</span>
+            <span className={`font-mono text-xl font-bold ${getScoreColor(response.scores.market_potential)} glow-text`}>
               {response.scores.market_potential}/10
             </span>
           </div>
-          <div className="w-full bg-muted-foreground/20 rounded-full h-2">
+          <div className="w-full bg-muted-foreground/20 rounded-full h-3 overflow-hidden">
             <div 
-              className="bg-accent h-2 rounded-full transition-all duration-1000"
+              className="bg-gradient-to-r from-accent to-accent-2 h-3 rounded-full score-fill"
               style={{ width: `${(response.scores.market_potential / 10) * 100}%` }}
             />
           </div>

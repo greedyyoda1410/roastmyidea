@@ -51,17 +51,17 @@ export default function Leaderboard() {
   };
 
   const getRankBadge = (index: number) => {
-    if (index === 0) return '🥇';
-    if (index === 1) return '🥈';
-    if (index === 2) return '🥉';
-    return `#${index + 1}`;
+    if (index === 0) return <span className="text-4xl glow-text">🥇</span>;
+    if (index === 1) return <span className="text-4xl glow-text">🥈</span>;
+    if (index === 2) return <span className="text-4xl glow-text">🥉</span>;
+    return <span className="text-xl font-bold text-accent">#{index + 1}</span>;
   };
 
   return (
-    <div className="bg-surface/50 border border-muted-foreground/20 rounded-2xl p-8">
+    <div className="bg-surface/50 border-4 border-accent/30 rounded-3xl p-8 bold-shadow">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-foreground font-mono">
-          Leaderboard
+        <h2 className="text-3xl font-bold text-foreground font-mono glow-text">
+          🏆 LEADERBOARD
         </h2>
         
         {/* Time Filter */}
@@ -100,8 +100,8 @@ export default function Leaderboard() {
             <div
               key={entry.id}
               className={`
-                bg-background/50 border rounded-xl p-4 transition-all duration-200 hover:border-accent/50
-                ${index < 3 ? 'border-accent/30' : 'border-muted-foreground/20'}
+                bg-background/50 border-2 rounded-xl p-4 transition-all duration-200 hover:border-accent/50 hover:scale-102 bold-shadow
+                ${index < 3 ? 'border-accent/40' : 'border-muted-foreground/20'}
               `}
             >
               <div className="flex items-start gap-4">

@@ -59,52 +59,52 @@ export default function ToneMatrix({ value, onChange }: ToneMatrixProps) {
   return (
     <div className="space-y-4">
       <div className="text-center">
-        <h3 className="text-lg font-semibold text-foreground mb-2">Tone Matrix</h3>
+        <h3 className="text-2xl font-bold text-foreground mb-2 glow-text">🎭 Tone Control Stage</h3>
         <p className="text-sm text-muted-foreground">
-          Drag to set your preferred roasting style
+          Drag the spotlight to set your roasting style
         </p>
       </div>
       
       <div className="relative">
         <div
           ref={containerRef}
-          className="relative w-64 h-64 mx-auto bg-surface border-2 border-muted-foreground/30 rounded-2xl cursor-crosshair overflow-hidden"
+          className="relative w-80 h-80 mx-auto bg-surface border-4 border-accent/30 rounded-3xl cursor-crosshair overflow-hidden stage-floor bold-shadow"
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
         >
-          {/* Grid lines */}
-          <div className="absolute inset-0">
-            <div className="absolute top-1/2 left-0 right-0 h-px bg-muted-foreground/20" />
-            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-muted-foreground/20" />
-          </div>
-          
-          {/* Quadrant labels */}
-          <div className="absolute top-2 left-2 text-xs text-muted-foreground font-mono">
-            Sarcastic
-          </div>
-          <div className="absolute top-2 right-2 text-xs text-muted-foreground font-mono">
-            Funny
-          </div>
-          <div className="absolute bottom-2 left-2 text-xs text-muted-foreground font-mono">
-            Supportive
-          </div>
-          <div className="absolute bottom-2 right-2 text-xs text-muted-foreground font-mono">
-            Serious
-          </div>
-          
-          {/* Draggable point */}
+          {/* Spotlight effect following the knob */}
           <div
-            className="absolute w-4 h-4 bg-accent rounded-full border-2 border-accent-2 transform -translate-x-2 -translate-y-2 shadow-lg transition-all duration-150"
+            className="absolute w-64 h-64 spotlight-circle transform -translate-x-32 -translate-y-32 transition-all duration-200"
             style={{
               left: `${value.humor * 100}%`,
               top: `${(value.sarcasm + 1) * 50}%`,
             }}
           />
           
-          {/* Glow effect */}
+          {/* Center crosshair */}
+          <div className="absolute inset-0">
+            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-accent/40" />
+            <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-accent/40" />
+          </div>
+          
+          {/* Corner labels with emojis */}
+          <div className="absolute top-3 left-3 text-sm font-bold text-accent font-mono">
+            😏 SARCASTIC
+          </div>
+          <div className="absolute top-3 right-3 text-sm font-bold text-accent font-mono">
+            😂 FUNNY
+          </div>
+          <div className="absolute bottom-3 left-3 text-sm font-bold text-accent font-mono">
+            💚 SUPPORTIVE
+          </div>
+          <div className="absolute bottom-3 right-3 text-sm font-bold text-accent font-mono">
+            🧐 SERIOUS
+          </div>
+          
+          {/* Draggable point (spotlight knob) */}
           <div
-            className="absolute w-8 h-8 bg-accent/20 rounded-full transform -translate-x-4 -translate-y-4 pointer-events-none"
+            className="absolute w-6 h-6 bg-accent rounded-full border-4 border-accent-2 transform -translate-x-3 -translate-y-3 spotlight-glow transition-all duration-200 z-10"
             style={{
               left: `${value.humor * 100}%`,
               top: `${(value.sarcasm + 1) * 50}%`,
@@ -113,11 +113,11 @@ export default function ToneMatrix({ value, onChange }: ToneMatrixProps) {
         </div>
         
         {/* Current selection display */}
-        <div className="mt-4 text-center">
-          <div className="text-sm font-mono text-accent">
+        <div className="mt-6 text-center bg-surface/80 border border-accent/30 rounded-xl p-4 bold-shadow">
+          <div className="text-lg font-bold text-accent font-mono glow-text">
             {getQuadrantLabel()}
           </div>
-          <div className="text-xs text-muted-foreground mt-1">
+          <div className="text-xs text-muted-foreground mt-2">
             Humor: {Math.round(value.humor * 100)}% | Sarcasm: {Math.round(value.sarcasm * 100)}%
           </div>
         </div>

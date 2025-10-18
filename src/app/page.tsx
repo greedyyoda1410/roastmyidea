@@ -145,8 +145,16 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      {/* Skip to main content - Accessibility */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-accent focus:text-background focus:rounded-xl focus:font-mono"
+      >
+        Skip to main content
+      </a>
+
       {/* Header */}
-      <header className="border-b border-muted-foreground/20">
+      <header className="border-b border-muted-foreground/20" role="banner">
         <div className="max-w-4xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex-1" />
@@ -173,7 +181,7 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-6 py-12">
+      <main id="main-content" className="max-w-4xl mx-auto px-6 py-12" role="main">
         <div className="space-y-8">
           {/* Error Display */}
           {error && (
@@ -212,24 +220,33 @@ export default function Home() {
                 <button
                   onClick={handleSubmit}
                   disabled={!isValid || isLoading}
+                  aria-label={isLoading ? 'Judges are deliberating' : 'Submit idea for roasting'}
+                  aria-busy={isLoading}
                   className={`
-                    px-8 py-4 rounded-2xl font-mono text-lg font-semibold
-                    transition-all duration-200 transform
+                    px-12 py-5 rounded-2xl font-mono text-xl font-bold
+                    transition-all duration-300 transform relative overflow-hidden
+                    bold-shadow
                     ${isValid && !isLoading
-                      ? 'bg-accent text-background hover:bg-accent-2 hover:scale-105 shadow-lg hover:shadow-accent/25'
+                      ? 'bg-accent text-background hover:bg-accent-2 hover:scale-105 pulse-cta'
                       : 'bg-muted-foreground/20 text-muted-foreground cursor-not-allowed'
                     }
                     ${isLoading ? 'animate-pulse' : ''}
                   `}
                 >
-                  {isLoading ? (
-                    <span className="flex items-center gap-2">
-                      <span className="cursor-blink">Judges are deliberating</span>
-                      <span className="animate-spin">⚡</span>
-                    </span>
-                  ) : (
-                    'Roast Me!'
+                  {/* Radial highlight overlay */}
+                  {isValid && !isLoading && (
+                    <div className="absolute inset-0 radial-highlight opacity-50" />
                   )}
+                  <span className="relative z-10">
+                    {isLoading ? (
+                      <span className="flex items-center gap-3">
+                        <span className="cursor-blink glow-text">🎬 JUDGES DELIBERATING</span>
+                        <span className="animate-spin text-2xl">⭐</span>
+                      </span>
+                    ) : (
+                      <span className="glow-text">🎪 ROAST ME!</span>
+                    )}
+                  </span>
                 </button>
               </div>
             </div>
@@ -240,22 +257,22 @@ export default function Home() {
             <div className="space-y-6">
               {/* Show verdict only after all judges are visible */}
               {visibleJudges === roastResult.judges.length && (
-                <div className="text-center animate-fade-in">
-                  <h2 className="text-2xl font-bold text-foreground mb-2">
-                    Final Verdict
+                <div className="text-center bounce-in">
+                  <h2 className="text-3xl font-bold text-foreground mb-4 glow-text">
+                    🎉 FINAL VERDICT 🎉
                   </h2>
                   <div className={`
-                    inline-block px-6 py-3 rounded-2xl border-2 font-mono text-lg font-semibold
-                    transform transition-all duration-500 hover:scale-105
-                    ${roastResult.finalVerdict === 'PASS' ? 'text-success border-success bg-success/10' :
-                      roastResult.finalVerdict === 'FAIL' ? 'text-danger border-danger bg-danger/10' :
-                      'text-warning border-warning bg-warning/10'}
+                    inline-block px-10 py-5 rounded-2xl border-4 font-mono text-2xl font-bold
+                    transform transition-all duration-500 hover:scale-110 spotlight-glow
+                    ${roastResult.finalVerdict === 'PASS' ? 'text-success border-success bg-success/20' :
+                      roastResult.finalVerdict === 'FAIL' ? 'text-danger border-danger bg-danger/20' :
+                      'text-warning border-warning bg-warning/20'}
                   `}>
                     {roastResult.finalVerdict}
                   </div>
                   {roastResult.judges.length > 1 && (
-                    <p className="text-sm text-muted-foreground mt-2">
-                      Based on {roastResult.judges.length} judges&apos; evaluations
+                    <p className="text-sm text-muted-foreground mt-4">
+                      📊 Based on {roastResult.judges.length} judges&apos; evaluations
                     </p>
                   )}
                 </div>
