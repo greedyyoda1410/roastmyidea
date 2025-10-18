@@ -58,7 +58,13 @@ ALTER TABLE roasts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE roast_files ENABLE ROW LEVEL SECURITY;
 ALTER TABLE leaderboard ENABLE ROW LEVEL SECURITY;
 
--- Create policies for public access (hackathon mode - adjust for production)
+-- Grant permissions to authenticated and anonymous users
+GRANT USAGE ON SCHEMA public TO anon, authenticated;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO anon, authenticated;
+
+-- Create policies for public access (hackathon mode - works for everyone)
 CREATE POLICY "Allow public read access on roasts" ON roasts
   FOR SELECT USING (true);
 
