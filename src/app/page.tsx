@@ -7,6 +7,7 @@ import FileUpload from '@/components/FileUpload';
 import ToneMatrix from '@/components/ToneMatrix';
 import ErrorDisplay from '@/components/ErrorDisplay';
 import JudgeCard from '@/components/JudgeCard';
+import Leaderboard from '@/components/Leaderboard';
 import AuthButton from '@/components/AuthButton';
 import { getCurrentUser } from '@/lib/auth';
 import { type ToneMatrix as ToneMatrixType, type ErrorType, type MultiJudgeResponse } from '@/types';
@@ -256,6 +257,11 @@ export default function Home() {
               </p>
             </div>
           )}
+
+          {/* Leaderboard */}
+          <div className="mt-16">
+            <Leaderboard />
+          </div>
         </div>
       </main>
 
