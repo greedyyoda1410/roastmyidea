@@ -6,12 +6,16 @@ interface FileUploadProps {
   onFilesChange: (files: {
     pitchDeck: File | null;
     demoImages: File[];
+    appLink: string;
+    repoLink: string;
   }) => void;
 }
 
 export default function FileUpload({ onFilesChange }: FileUploadProps) {
   const [pitchDeck, setPitchDeck] = useState<File | null>(null);
   const [demoImages, setDemoImages] = useState<File[]>([]);
+  const [appLink, setAppLink] = useState('');
+  const [repoLink, setRepoLink] = useState('');
   const [errors, setErrors] = useState<string[]>([]);
 
   const handlePitchDeckChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,7 +37,7 @@ export default function FileUpload({ onFilesChange }: FileUploadProps) {
 
     setPitchDeck(file);
     setErrors([]);
-    onFilesChange({ pitchDeck: file, demoImages });
+    onFilesChange({ pitchDeck: file, demoImages, appLink, repoLink });
   };
 
   const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,18 +71,28 @@ export default function FileUpload({ onFilesChange }: FileUploadProps) {
 
     setErrors(newErrors);
     setDemoImages(validFiles);
-    onFilesChange({ pitchDeck, demoImages: validFiles });
+    onFilesChange({ pitchDeck, demoImages: validFiles, appLink, repoLink });
   };
 
   const removePitchDeck = () => {
     setPitchDeck(null);
-    onFilesChange({ pitchDeck: null, demoImages });
+    onFilesChange({ pitchDeck: null, demoImages, appLink, repoLink });
   };
 
   const removeImage = (index: number) => {
     const newImages = demoImages.filter((_, i) => i !== index);
     setDemoImages(newImages);
-    onFilesChange({ pitchDeck, demoImages: newImages });
+    onFilesChange({ pitchDeck, demoImages: newImages, appLink, repoLink });
+  };
+
+  const handleAppLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAppLink(e.target.value);
+    onFilesChange({ pitchDeck, demoImages, appLink: e.target.value, repoLink });
+  };
+
+  const handleRepoLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRepoLink(e.target.value);
+    onFilesChange({ pitchDeck, demoImages, appLink, repoLink: e.target.value });
   };
 
   return (
@@ -183,6 +197,40 @@ export default function FileUpload({ onFilesChange }: FileUploadProps) {
         </div>
       </div>
 
+      {/* Production App Link */}
+      <div className="space-y-3">
+        <label className="block text-sm font-medium text-foreground">
+          Production App Link
+        </label>
+        <input
+          type="url"
+          value={appLink}
+          onChange={handleAppLinkChange}
+          placeholder="https://yourapp.com"
+          className="w-full px-4 py-3 bg-surface border border-muted-foreground/30 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all duration-200"
+        />
+        <p className="text-xs text-muted-foreground">
+          AI agent will review your live app (2-3 minutes)
+        </p>
+      </div>
+
+      {/* Git Repository Link */}
+      <div className="space-y-3">
+        <label className="block text-sm font-medium text-foreground">
+          Git Repository Link
+        </label>
+        <input
+          type="url"
+          value={repoLink}
+          onChange={handleRepoLinkChange}
+          placeholder="https://github.com/username/repo"
+          className="w-full px-4 py-3 bg-surface border border-muted-foreground/30 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all duration-200"
+        />
+        <p className="text-xs text-muted-foreground">
+          AI agent will analyze your codebase structure
+        </p>
+      </div>
+
       {/* Error Messages */}
       {errors.length > 0 && (
         <div className="bg-danger/10 border border-danger/30 rounded-xl p-4">
@@ -196,12 +244,16 @@ export default function FileUpload({ onFilesChange }: FileUploadProps) {
       )}
 
       {/* File Summary */}
-      {(pitchDeck || demoImages.length > 0) && (
+      {(pitchDeck || demoImages.length > 0 || appLink || repoLink) && (
         <div className="bg-accent/5 border border-accent/20 rounded-xl p-4">
           <p className="text-xs font-mono text-accent">
             {pitchDeck ? '1 pitch deck' : ''} 
             {pitchDeck && demoImages.length > 0 ? ' + ' : ''}
             {demoImages.length > 0 ? `${demoImages.length} image${demoImages.length > 1 ? 's' : ''}` : ''}
+            {(pitchDeck || demoImages.length > 0) && (appLink || repoLink) ? ' + ' : ''}
+            {appLink ? 'app link' : ''}
+            {appLink && repoLink ? ' + ' : ''}
+            {repoLink ? 'repo link' : ''}
             {' '}attached
           </p>
         </div>

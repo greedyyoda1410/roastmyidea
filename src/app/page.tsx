@@ -17,9 +17,11 @@ export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [projectName, setProjectName] = useState('');
   const [idea, setIdea] = useState('');
-  const [files, setFiles] = useState<{ pitchDeck: File | null; demoImages: File[] }>({
+  const [files, setFiles] = useState<{ pitchDeck: File | null; demoImages: File[]; appLink: string; repoLink: string }>({
     pitchDeck: null,
-    demoImages: []
+    demoImages: [],
+    appLink: '',
+    repoLink: ''
   });
   const [tone, setTone] = useState<ToneMatrixType>({ humor: 0.7, sarcasm: 0.2 });
   const [isProjectNameValid, setIsProjectNameValid] = useState(false);
@@ -45,7 +47,40 @@ export default function Home() {
     setVisibleJudges(0);
     
     try {
-      // Step 1: Create initial roast to get ID
+      let agentAnalysis = '';
+      
+      // Step 1: Call agents if URLs provided (before roasting)
+      if (files.appLink || files.repoLink) {
+        const agentPromises = [];
+        
+        if (files.appLink) {
+          agentPromises.push(
+            fetch('/api/agents/review-app', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ appUrl: files.appLink }),
+            }).then(res => res.json())
+          );
+        }
+        
+        if (files.repoLink) {
+          agentPromises.push(
+            fetch('/api/agents/review-repo', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ repoUrl: files.repoLink }),
+            }).then(res => res.json())
+          );
+        }
+        
+        const agentResults = await Promise.all(agentPromises);
+        agentAnalysis = agentResults
+          .filter(r => r.success)
+          .map(r => r.summary)
+          .join('\n\n');
+      }
+
+      // Step 2: Create roast with agent analysis
       const initialResponse = await fetch('/api/roast', {
         method: 'POST',
         headers: {
@@ -56,7 +91,7 @@ export default function Home() {
           idea, 
           tone,
           userId: user?.id || null,
-          filesAttached: files.pitchDeck !== null || files.demoImages.length > 0
+          agentAnalysis: agentAnalysis || undefined
         }),
       });
 
@@ -67,7 +102,7 @@ export default function Home() {
         return;
       }
 
-      // Step 2: Upload files if any (in background while judges work)
+      // Step 3: Upload files if any (in background)
       if (files.pitchDeck || files.demoImages.length > 0) {
         const fileFormData = new FormData();
         fileFormData.append('roastId', roastData.roast.id);

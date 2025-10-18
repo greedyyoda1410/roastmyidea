@@ -9,7 +9,7 @@ export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
   try {
-    const { projectName, idea, tone, userId } = await request.json();
+    const { projectName, idea, tone, userId, agentAnalysis } = await request.json();
 
     // Validate project name
     if (!projectName || typeof projectName !== 'string' || projectName.trim().length === 0) {
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
         judgeTone.humor = Math.max(0, Math.min(1, judgeTone.humor));
         judgeTone.sarcasm = Math.max(-1, Math.min(1, judgeTone.sarcasm));
         
-        const judgeResponse = await generateRoast(idea, judgeTone, judge);
+        const judgeResponse = await generateRoast(idea, judgeTone, judge, agentAnalysis);
         judgeResults.push({
           name: judge.name,
           response: judgeResponse
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
     } else {
       // Single judge mode (Technical Judge only)
       const technicalJudge = JUDGE_PERSONAS[0];
-      const judgeResponse = await generateRoast(idea, tone as ToneMatrix, technicalJudge);
+      const judgeResponse = await generateRoast(idea, tone as ToneMatrix, technicalJudge, agentAnalysis);
       judgeResults.push({
         name: technicalJudge.name,
         response: judgeResponse

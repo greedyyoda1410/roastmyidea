@@ -7,7 +7,8 @@ const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
 export async function generateRoast(
   idea: string,
   tone: ToneMatrix,
-  persona: typeof JUDGE_PERSONAS[number]
+  persona: typeof JUDGE_PERSONAS[number],
+  agentAnalysis?: string
 ): Promise<JudgeResponse> {
   const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
@@ -16,6 +17,8 @@ You are ${persona.name}, a ${persona.role} at a hackathon judging panel.
 
 CONTEXT:
 Startup Idea: "${idea}"
+
+${agentAnalysis ? `\nADDITIONAL CONTEXT FROM AGENTS:\n${agentAnalysis}` : ''}
 
 TONE PARAMETERS:
 - Humor Level: ${tone.humor} (0-1, where 0 is serious and 1 is very funny)
