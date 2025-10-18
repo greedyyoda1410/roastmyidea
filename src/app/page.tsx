@@ -14,6 +14,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<ErrorType | null>(null);
   const [roastResult, setRoastResult] = useState<MultiJudgeResponse | null>(null);
+  const [visibleJudges, setVisibleJudges] = useState<number>(0);
 
   const handleSubmit = async () => {
     if (!isValid) return;
@@ -21,6 +22,7 @@ export default function Home() {
     setIsLoading(true);
     setError(null);
     setRoastResult(null);
+    setVisibleJudges(0);
     
     try {
       const response = await fetch('/api/roast', {
@@ -39,6 +41,14 @@ export default function Home() {
       }
 
       setRoastResult(data.roast);
+      
+      // Sequentially reveal judges with animation
+      const judgeCount = data.roast.judges.length;
+      for (let i = 0; i < judgeCount; i++) {
+        setTimeout(() => {
+          setVisibleJudges(i + 1);
+        }, i * 800); // 800ms delay between each judge reveal
+      }
     } catch (err) {
       console.error('Error submitting roast:', err);
       setError('GENERIC');
@@ -123,31 +133,49 @@ export default function Home() {
           {/* Roast Results */}
           {roastResult && (
             <div className="space-y-6">
-              <div className="text-center">
-                <h2 className="text-2xl font-bold text-foreground mb-2">
-                  Judge Verdict
-                </h2>
-                <div className={`
-                  inline-block px-6 py-3 rounded-2xl border-2 font-mono text-lg font-semibold
-                  ${roastResult.finalVerdict === 'PASS' ? 'text-success border-success bg-success/10' :
-                    roastResult.finalVerdict === 'FAIL' ? 'text-danger border-danger bg-danger/10' :
-                    'text-warning border-warning bg-warning/10'}
-                `}>
-                  {roastResult.finalVerdict}
+              {/* Show verdict only after all judges are visible */}
+              {visibleJudges === roastResult.judges.length && (
+                <div className="text-center animate-fade-in">
+                  <h2 className="text-2xl font-bold text-foreground mb-2">
+                    Final Verdict
+                  </h2>
+                  <div className={`
+                    inline-block px-6 py-3 rounded-2xl border-2 font-mono text-lg font-semibold
+                    transform transition-all duration-500 hover:scale-105
+                    ${roastResult.finalVerdict === 'PASS' ? 'text-success border-success bg-success/10' :
+                      roastResult.finalVerdict === 'FAIL' ? 'text-danger border-danger bg-danger/10' :
+                      'text-warning border-warning bg-warning/10'}
+                  `}>
+                    {roastResult.finalVerdict}
+                  </div>
+                  {roastResult.judges.length > 1 && (
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Based on {roastResult.judges.length} judges&apos; evaluations
+                    </p>
+                  )}
                 </div>
-              </div>
+              )}
 
-              {/* Judge Cards */}
+              {/* Judge Cards - Sequential Reveal */}
               <div className="space-y-4">
                 {roastResult.judges.map((judge, index) => (
                   <JudgeCard
                     key={index}
                     name={judge.name}
                     response={judge.response}
-                    isVisible={true}
+                    isVisible={index < visibleJudges}
                   />
                 ))}
               </div>
+              
+              {/* Loading indicator while judges are being revealed */}
+              {visibleJudges < roastResult.judges.length && (
+                <div className="text-center text-muted-foreground">
+                  <div className="animate-pulse">
+                    Waiting for judge {visibleJudges + 1} of {roastResult.judges.length}...
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
