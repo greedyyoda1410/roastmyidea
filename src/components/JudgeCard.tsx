@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import VoicePlayer from './VoicePlayer';
 import { type JudgeResponse } from '@/types';
 
 interface JudgeCardProps {
@@ -122,6 +123,9 @@ export default function JudgeCard({ name, response, isVisible }: JudgeCardProps)
           {response.feedback}
         </p>
       </div>
+
+      {/* Voice Player */}
+      <VoicePlayer text={response.roast} judgeName={name} />
     </div>
   );
 }
