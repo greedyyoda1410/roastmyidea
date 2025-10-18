@@ -4,7 +4,7 @@
  * Tests the complete single judge workflow from UI to API
  */
 
-const fetch = require('node-fetch');
+const { default: fetch } = require('node-fetch');
 
 const BASE_URL = `http://localhost:${process.env.TEST_PORT || 3000}`;
 

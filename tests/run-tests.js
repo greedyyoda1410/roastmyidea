@@ -21,9 +21,9 @@ class TestRunner {
   constructor() {
     this.args = process.argv.slice(2);
     this.feature = this.args[0] || 'single-judge';
+    this.config = testConfig.features[this.feature] || testConfig.integration;
     this.port = this.getPort();
     this.verbose = this.args.includes('--verbose');
-    this.config = testConfig.features[this.feature] || testConfig.integration;
   }
 
   getPort() {
@@ -188,7 +188,8 @@ class TestRunner {
 
 // Add fetch polyfill for Node.js
 if (typeof fetch === 'undefined') {
-  global.fetch = require('node-fetch');
+  const { default: fetch } = require('node-fetch');
+  global.fetch = fetch;
 }
 
 // Run the test runner

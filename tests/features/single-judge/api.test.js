@@ -4,7 +4,7 @@
  * Tests the /api/roast endpoint for single judge functionality
  */
 
-const fetch = require('node-fetch');
+const { default: fetch } = require('node-fetch');
 
 const BASE_URL = `http://localhost:${process.env.TEST_PORT || 3000}`;
 

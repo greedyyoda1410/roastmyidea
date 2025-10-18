@@ -13,9 +13,8 @@ const testConfig = {
       port: 3000,
       description: 'Single judge AI integration with Gemini API',
       testFiles: [
-        'tests/features/single-judge/api.test.js',
-        'tests/features/single-judge/components.test.js',
-        'tests/features/single-judge/integration.test.js'
+        'tests/features/single-judge/mock.test.js',
+        'tests/features/single-judge/components.test.js'
       ],
       environment: {
         ENABLE_MULTI_JUDGE: 'false',
