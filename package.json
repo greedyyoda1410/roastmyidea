@@ -6,7 +6,18 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node tests/run-tests.js",
+    "test:single-judge": "node tests/run-tests.js single-judge",
+    "test:multi-judge": "node tests/run-tests.js multi-judge",
+    "test:file-upload": "node tests/run-tests.js file-upload",
+    "test:voice-synthesis": "node tests/run-tests.js voice-synthesis",
+    "test:themes": "node tests/run-tests.js themes",
+    "test:integration": "node tests/run-tests.js integration",
+    "dev:multi-judge": "git checkout feature/multi-judge && npm run dev -- --port 3001",
+    "dev:file-upload": "git checkout feature/file-upload && npm run dev -- --port 3002",
+    "dev:voice-synthesis": "git checkout feature/voice-synthesis && npm run dev -- --port 3003",
+    "dev:themes": "git checkout feature/themes && npm run dev -- --port 3004"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -34,6 +45,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.6",
+    "node-fetch": "^3.3.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
