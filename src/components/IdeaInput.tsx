@@ -30,11 +30,11 @@ export default function IdeaInput({ value, onChange, onValidationChange }: IdeaI
           onBlur={() => setIsFocused(false)}
           placeholder="Describe your startup idea in detail... What problem does it solve? Who are your customers? What makes it unique?"
           className={`
-            w-full h-32 px-4 py-3 bg-surface border rounded-2xl resize-none
+            w-full h-32 px-4 py-3 bg-surface border-2 rounded-2xl resize-none
             text-foreground placeholder-muted-foreground
             focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent
             transition-all duration-200
-            ${isFocused ? 'ring-2 ring-accent/50 border-accent' : 'border-muted-foreground/30'}
+            ${isFocused ? 'ring-2 ring-accent/50 border-accent border-2' : 'border-accent/40 border-2'}
             ${!isValid && value.length > 0 ? 'border-danger/50 ring-2 ring-danger/20' : ''}
           `}
           maxLength={maxLength}

@@ -186,28 +186,21 @@ export default function Home() {
       {/* Main Content */}
       <main id="main-content" className="max-w-4xl mx-auto px-6 py-12" role="main">
         <div className="space-y-8">
-          {/* Error Display */}
-          {error && (
-            <div className="flex justify-center">
-              <ErrorDisplay errorType={error} onRetry={handleRetry} />
-            </div>
-          )}
-
           {/* Input Form */}
           <div className="bg-surface/50 border border-muted-foreground/20 rounded-2xl p-8">
             <div className="space-y-8">
-              {/* Project Name Input */}
-              <ProjectNameInput
-                value={projectName}
-                onChange={setProjectName}
-                onValidationChange={setIsProjectNameValid}
-              />
-
-              {/* Idea Input */}
+              {/* Idea Input - NOW FIRST */}
               <IdeaInput
                 value={idea}
                 onChange={setIdea}
                 onValidationChange={setIsIdeaValid}
+              />
+
+              {/* Project Name Input - NOW SECOND */}
+              <ProjectNameInput
+                value={projectName}
+                onChange={setProjectName}
+                onValidationChange={setIsProjectNameValid}
               />
 
               {/* File Upload */}
@@ -252,6 +245,13 @@ export default function Home() {
                   </span>
                 </button>
               </div>
+
+              {/* Error Display - Right below button, inside inputs section */}
+              {error && (
+                <div className="flex justify-center">
+                  <ErrorDisplay errorType={error} onRetry={handleRetry} />
+                </div>
+              )}
             </div>
           </div>
 

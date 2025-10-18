@@ -50,6 +50,9 @@ export default function ToneMatrix({ value, onChange }: ToneMatrixProps) {
   }, []);
 
   const getQuadrantLabel = () => {
+    // humor > 0.5 = Funny (right), humor <= 0.5 = Serious (left)
+    // sarcasm > 0 = Sarcastic (top), sarcasm <= 0 = Supportive (bottom)
+    
     if (value.humor > 0.5 && value.sarcasm > 0) return 'Sarcastic & Funny';
     if (value.humor > 0.5 && value.sarcasm <= 0) return 'Supportive & Funny';
     if (value.humor <= 0.5 && value.sarcasm > 0) return 'Sarcastic & Serious';
@@ -96,10 +99,10 @@ export default function ToneMatrix({ value, onChange }: ToneMatrixProps) {
             😂 FUNNY
           </div>
           <div className="absolute bottom-3 left-3 text-sm font-bold text-accent font-mono">
-            💚 SUPPORTIVE
+            🧐 SERIOUS
           </div>
           <div className="absolute bottom-3 right-3 text-sm font-bold text-accent font-mono">
-            🧐 SERIOUS
+            💚 SUPPORTIVE
           </div>
           
           {/* Draggable point (spotlight knob) */}

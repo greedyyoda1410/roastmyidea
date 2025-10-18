@@ -73,8 +73,8 @@ export default function Leaderboard() {
               className={`
                 px-3 py-1 rounded-lg text-xs font-mono transition-all duration-200
                 ${timeFilter === filter
-                  ? 'bg-accent text-background'
-                  : 'bg-surface border border-muted-foreground/30 text-muted-foreground hover:text-foreground'
+                  ? 'bg-accent text-background font-bold'
+                  : 'bg-transparent border border-muted-foreground/30 text-muted-foreground hover:text-foreground hover:border-muted-foreground/50'
                 }
               `}
             >
