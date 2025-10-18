@@ -9,12 +9,20 @@ export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
   try {
-    const { idea, tone } = await request.json();
+    const { projectName, idea, tone, userId } = await request.json();
 
-    // Validate input
+    // Validate project name
+    if (!projectName || typeof projectName !== 'string' || projectName.trim().length === 0) {
+      return NextResponse.json(
+        { error: 'VALIDATION_EMPTY', message: 'Project name is required' },
+        { status: 400 }
+      );
+    }
+
+    // Validate idea
     if (!idea || typeof idea !== 'string' || idea.trim().length === 0) {
       return NextResponse.json(
-        { error: 'VALIDATION_EMPTY' },
+        { error: 'VALIDATION_EMPTY', message: 'Startup idea is required' },
         { status: 400 }
       );
     }
@@ -112,6 +120,8 @@ export async function POST(request: NextRequest) {
 
     // Save to database
     const roastData = {
+      userId: userId || null,
+      projectName: projectName,
       ideaText: idea,
       toneHumor: tone.humor,
       toneSarcasm: tone.sarcasm,

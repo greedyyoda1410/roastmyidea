@@ -1,10 +1,15 @@
 -- RoastMyIdea.AI Database Schema
 -- Run this in Supabase SQL Editor (https://supabase.com/dashboard/project/YOUR_PROJECT/sql)
 
+-- Note: Supabase Auth automatically creates the auth.users table
+-- We'll reference it for authenticated users
+
 -- Create roasts table
 CREATE TABLE IF NOT EXISTS roasts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE, -- Optional - null if anonymous
+  project_name TEXT NOT NULL, -- Required - for leaderboard display
   idea_text TEXT NOT NULL,
   tone_humor REAL,
   tone_sarcasm REAL,
@@ -30,6 +35,8 @@ CREATE TABLE IF NOT EXISTS roast_files (
 CREATE TABLE IF NOT EXISTS leaderboard (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   roast_id UUID REFERENCES roasts(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE, -- Optional - null if anonymous
+  project_name TEXT NOT NULL, -- Display name on leaderboard
   idea_text TEXT NOT NULL,
   total_score REAL NOT NULL,
   originality REAL NOT NULL,
@@ -88,6 +95,8 @@ BEGIN
     -- Insert into leaderboard
     INSERT INTO leaderboard (
       roast_id,
+      user_id,
+      project_name,
       idea_text,
       total_score,
       originality,
@@ -97,6 +106,8 @@ BEGIN
       verdict
     ) VALUES (
       NEW.id,
+      NEW.user_id,
+      NEW.project_name,
       NEW.idea_text,
       total_score_val,
       (NEW.scores->>'originality')::REAL,

@@ -1,20 +1,34 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import IdeaInput from '@/components/IdeaInput';
+import ProjectNameInput from '@/components/ProjectNameInput';
 import ToneMatrix from '@/components/ToneMatrix';
 import ErrorDisplay from '@/components/ErrorDisplay';
 import JudgeCard from '@/components/JudgeCard';
+import AuthButton from '@/components/AuthButton';
+import { getCurrentUser } from '@/lib/auth';
 import { type ToneMatrix as ToneMatrixType, type ErrorType, type MultiJudgeResponse } from '@/types';
+import type { User } from '@supabase/supabase-js';
 
 export default function Home() {
+  const [user, setUser] = useState<User | null>(null);
+  const [projectName, setProjectName] = useState('');
   const [idea, setIdea] = useState('');
   const [tone, setTone] = useState<ToneMatrixType>({ humor: 0.7, sarcasm: 0.2 });
-  const [isValid, setIsValid] = useState(false);
+  const [isProjectNameValid, setIsProjectNameValid] = useState(false);
+  const [isIdeaValid, setIsIdeaValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<ErrorType | null>(null);
   const [roastResult, setRoastResult] = useState<MultiJudgeResponse | null>(null);
   const [visibleJudges, setVisibleJudges] = useState<number>(0);
+
+  const isValid = isProjectNameValid && isIdeaValid;
+
+  useEffect(() => {
+    // Get current user on mount
+    getCurrentUser().then(setUser);
+  }, []);
 
   const handleSubmit = async () => {
     if (!isValid) return;
@@ -30,7 +44,12 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ idea, tone }),
+        body: JSON.stringify({ 
+          projectName,
+          idea, 
+          tone,
+          userId: user?.id || null
+        }),
       });
 
       const data = await response.json();
@@ -65,14 +84,27 @@ export default function Home() {
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
       <header className="border-b border-muted-foreground/20">
-        <div className="max-w-4xl mx-auto px-6 py-8">
+        <div className="max-w-4xl mx-auto px-6 py-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex-1" />
+            <div className="flex-1 text-center">
+              <h1 className="text-3xl font-bold glitch" data-text="RoastMyIdea.AI">
+                RoastMyIdea.AI
+              </h1>
+            </div>
+            <div className="flex-1 flex justify-end">
+              <AuthButton />
+            </div>
+          </div>
           <div className="text-center">
-            <h1 className="text-4xl font-bold mb-2 glitch" data-text="RoastMyIdea.AI">
-              RoastMyIdea.AI
-            </h1>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-muted-foreground">
               Get your startup idea roasted by AI judges with personality, humor, and real critique
             </p>
+            {user && (
+              <p className="text-xs text-accent mt-1">
+                Signed in - Your roasts will be saved to your profile
+              </p>
+            )}
           </div>
         </div>
       </header>
@@ -90,11 +122,18 @@ export default function Home() {
           {/* Input Form */}
           <div className="bg-surface/50 border border-muted-foreground/20 rounded-2xl p-8">
             <div className="space-y-8">
+              {/* Project Name Input */}
+              <ProjectNameInput
+                value={projectName}
+                onChange={setProjectName}
+                onValidationChange={setIsProjectNameValid}
+              />
+
               {/* Idea Input */}
               <IdeaInput
                 value={idea}
                 onChange={setIdea}
-                onValidationChange={setIsValid}
+                onValidationChange={setIsIdeaValid}
               />
 
               {/* Tone Matrix */}

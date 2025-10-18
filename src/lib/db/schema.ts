@@ -3,6 +3,8 @@ import { pgTable, uuid, text, timestamp, real, jsonb } from 'drizzle-orm/pg-core
 export const roasts = pgTable('roasts', {
   id: uuid('id').primaryKey().defaultRandom(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
+  userId: uuid('user_id'), // Optional - null if anonymous
+  projectName: text('project_name').notNull(), // Required - for leaderboard display
   ideaText: text('idea_text').notNull(),
   toneHumor: real('tone_humor'),
   toneSarcasm: real('tone_sarcasm'),

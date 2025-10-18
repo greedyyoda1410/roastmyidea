@@ -65,6 +65,8 @@ export interface ProcessedFiles {
 export interface RoastSession {
   id: string;
   createdAt: Date;
+  userId?: string;
+  projectName: string;
   ideaText: string;
   toneHumor: number;
   toneSarcasm: number;
