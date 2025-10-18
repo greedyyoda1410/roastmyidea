@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+
+// Force dynamic rendering - don't try to prerender this page
+export const dynamic = 'force-dynamic';
 import IdeaInput from '@/components/IdeaInput';
 import ProjectNameInput from '@/components/ProjectNameInput';
 import FileUpload from '@/components/FileUpload';

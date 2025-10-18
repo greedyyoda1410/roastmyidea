@@ -2,7 +2,10 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { type ToneMatrix, type JudgeResponse } from '@/types';
 import { JUDGE_PERSONAS } from './constants';
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
+// Lazy initialization to avoid build-time errors
+function getGenAI() {
+  return new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || '');
+}
 
 export async function generateRoast(
   idea: string,
@@ -10,6 +13,7 @@ export async function generateRoast(
   persona: typeof JUDGE_PERSONAS[number],
   agentAnalysis?: string
 ): Promise<JudgeResponse> {
+  const genAI = getGenAI();
   const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
   const prompt = `
@@ -77,6 +81,7 @@ Respond with ONLY the JSON object, no additional text.
 }
 
 export async function moderateContent(idea: string): Promise<boolean> {
+  const genAI = getGenAI();
   const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
   
   const prompt = `

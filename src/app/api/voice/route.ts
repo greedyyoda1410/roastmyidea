@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { VOICE_BY_PERSONA, DEFAULT_VOICE_ID } from '@/lib/voices';
+import { getVoiceByPersona, getDefaultVoiceId } from '@/lib/voices';
 import { JUDGE_PERSONAS } from '@/lib/constants';
 
 export const runtime = 'edge';
@@ -28,7 +28,8 @@ export async function POST(request: NextRequest) {
     // Find the judge persona and get voice ID
     const judge = JUDGE_PERSONAS.find(j => j.name === judgeName);
     const voicePersona = judge?.voicePersona || "Tech Bro 3000";
-    const voiceId = VOICE_BY_PERSONA[voicePersona] || DEFAULT_VOICE_ID;
+    const voiceMapping = getVoiceByPersona();
+    const voiceId = voiceMapping[voicePersona] || getDefaultVoiceId();
 
     // Call ElevenLabs API
     const response = await fetch(
