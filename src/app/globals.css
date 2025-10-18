@@ -1,26 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
+/* Terminal Theme (Default) */
+.theme-terminal {
+  --bg: #1A1A1A;
+  --surface: #111111;
+  --text: #FAFAFA;
+  --muted: #9CA3AF;
+  --accent: #00FF9D;
+  --accent-2: #FF61F6;
+  --danger: #FF3B30;
+  --success: #00FF9D;
+  --warning: #FFD60A;
+}
+
+/* Lab Theme */
+.theme-lab {
+  --bg: #1E1E2E;
+  --surface: #111827;
+  --text: #F8FAFC;
+  --muted: #A1A1AA;
+  --accent: #007AFF;
+  --accent-2: #FF5E57;
+  --danger: #FF3B30;
+  --success: #007AFF;
+  --warning: #FFD60A;
+}
+
+/* Game Show Theme */
+.theme-gameshow {
+  --bg: #0D0F1A;
+  --surface: #0F1224;
+  --text: #FFFFFF;
+  --muted: #B3B8C5;
+  --accent: #FFD60A;
+  --accent-2: #FF9500;
+  --danger: #FF453A;
+  --success: #FFD60A;
+  --warning: #FF9500;
+}
+
+/* Default to Terminal theme */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #1A1A1A;
+  --surface: #111111;
+  --text: #FAFAFA;
+  --muted: #9CA3AF;
+  --accent: #00FF9D;
+  --accent-2: #FF61F6;
+  --danger: #FF3B30;
+  --success: #00FF9D;
+  --warning: #FFD60A;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --color-surface: var(--surface);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  transition: all 0.2s ease-out;
+}
+
+/* Terminal-specific styles */
+.theme-terminal {
+  background-image: 
+    linear-gradient(rgba(0, 255, 157, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 157, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Glitch effect for terminal theme */
+.theme-terminal .glitch {
+  position: relative;
+}
+
+.theme-terminal .glitch::before,
+.theme-terminal .glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.theme-terminal .glitch::before {
+  animation: glitch-1 0.5s infinite;
+  color: var(--accent-2);
+  z-index: -1;
+}
+
+.theme-terminal .glitch::after {
+  animation: glitch-2 0.5s infinite;
+  color: var(--accent);
+  z-index: -2;
+}
+
+@keyframes glitch-1 {
+  0%, 14%, 15%, 49%, 50%, 99%, 100% {
+    transform: translate(0);
+  }
+  15%, 49% {
+    transform: translate(-2px, 2px);
+  }
+}
+
+@keyframes glitch-2 {
+  0%, 20%, 21%, 62%, 63%, 99%, 100% {
+    transform: translate(0);
+  }
+  21%, 62% {
+    transform: translate(2px, -2px);
+  }
+}
+
+/* Scanlines effect */
+.theme-terminal::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    transparent 50%,
+    rgba(0, 255, 157, 0.03) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Cursor blink animation */
+.cursor-blink {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Smooth transitions for theme switching */
+* {
+  transition: background-color 0.2s ease-out, color 0.2s ease-out, border-color 0.2s ease-out;
 }
