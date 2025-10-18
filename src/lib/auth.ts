@@ -46,14 +46,23 @@ export async function signOut() {
 }
 
 export async function getCurrentUser() {
-  const { data: { user }, error } = await supabase.auth.getUser();
-  
-  if (error) {
-    console.error('Error getting current user:', error);
+  try {
+    const { data: { user }, error } = await supabase.auth.getUser();
+    
+    if (error) {
+      // Session missing is normal for logged-out users
+      if (error.message.includes('session') || error.message.includes('Auth session missing')) {
+        return null;
+      }
+      console.error('Error getting current user:', error);
+      return null;
+    }
+    
+    return user;
+  } catch {
+    // Silently handle auth errors - user is just not logged in
     return null;
   }
-  
-  return user;
 }
 
 export function onAuthStateChange(callback: (user: User | null) => void) {

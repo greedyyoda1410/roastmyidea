@@ -1,0 +1,41 @@
+
+> roastmyidea@0.1.0 dev
+> next dev --turbopack
+
+   ▲ Next.js 15.5.6 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.0.5:3000
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · optimizePackageImports
+
+ ✓ Starting...
+ ✓ Ready in 1203ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.4s
+ GET / 200 in 2696ms
+ GET / 200 in 137ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 1723ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 1914ms
+Error fetching leaderboard: Error: Failed query: select "id", "roast_id", "idea_text", "total_score", "originality", "feasibility", "wow_factor", "market_potential", "verdict", "created_at" from "leaderboard" order by "leaderboard"."total_score" desc limit $1
+params: 10
+    at async GET (src/app/api/leaderboard/route.ts:33:17)
+  31 |         .limit(Math.min(limit, 100));
+  32 |     } else {
+> 33 |       results = await db
+     |                 ^
+  34 |         .select()
+  35 |         .from(leaderboard)
+  36 |         .orderBy(desc(leaderboard.totalScore)) {
+  query: 'select "id", "roast_id", "idea_text", "total_score", "originality", "feasibility", "wow_factor", "market_potential", "verdict", "created_at" from "leaderboard" order by "leaderboard"."total_score" desc limit $1',
+  params: [ 10 ]
+}
+ GET /api/leaderboard?time=all&limit=10 500 in 2056ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 531ms
+ ✓ Compiled in 303ms
+ ✓ Compiled / in 78ms
+ GET / 200 in 256ms
+ ✓ Compiled in 98ms
+ ✓ Compiled in 108ms
+[?25h
