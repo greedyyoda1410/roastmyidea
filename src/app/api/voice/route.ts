@@ -1,13 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { VOICE_BY_PERSONA, DEFAULT_VOICE_ID } from '@/lib/voices';
+import { JUDGE_PERSONAS } from '@/lib/constants';
 
 export const runtime = 'edge';
-
-// Voice IDs for different judge personas
-const VOICE_IDS = {
-  'Technical Judge': 'pNInz6obpgDQGcFmaJgB', // Adam - Deep, authoritative
-  'Business Judge': '21m00Tcm4TlvDq8ikWAM', // Rachel - Professional, clear
-  'Creative Judge': 'EXAVITQu4vr4xnSDxMaL', // Bella - Expressive, dynamic
-};
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,7 +25,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const voiceId = VOICE_IDS[judgeName as keyof typeof VOICE_IDS] || VOICE_IDS['Technical Judge'];
+    // Find the judge persona and get voice ID
+    const judge = JUDGE_PERSONAS.find(j => j.name === judgeName);
+    const voicePersona = judge?.voicePersona || "Tech Bro 3000";
+    const voiceId = VOICE_BY_PERSONA[voicePersona] || DEFAULT_VOICE_ID;
 
     // Call ElevenLabs API
     const response = await fetch(
@@ -43,10 +42,12 @@ export async function POST(request: NextRequest) {
         },
         body: JSON.stringify({
           text: text,
-          model_id: 'eleven_monolingual_v1',
+          model_id: 'eleven_multilingual_v2',
           voice_settings: {
             stability: 0.5,
             similarity_boost: 0.75,
+            style: 0.15,
+            use_speaker_boost: true
           },
         }),
       }

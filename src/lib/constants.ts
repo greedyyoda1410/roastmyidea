@@ -36,19 +36,36 @@ export const JUDGE_PERSONAS = [
     name: "Technical Judge",
     role: "Senior Engineer",
     style: "Analytical, detail-oriented, loves clean code",
-    focus: "Technical feasibility, architecture, scalability"
+    focus: "Technical feasibility, architecture, scalability",
+    voicePersona: "Tech Bro 3000"
   },
   {
     name: "Business Judge",
     role: "VC Partner",
     style: "Market-focused, ROI-driven, loves big numbers",
-    focus: "Market size, business model, competitive advantage"
+    focus: "Market size, business model, competitive advantage",
+    voicePersona: "Brutal VC"
   },
   {
     name: "Creative Judge",
     role: "Design Director",
     style: "User-obsessed, aesthetic-focused, loves innovation",
-    focus: "User experience, design, creativity, innovation"
+    focus: "User experience, design, creativity, innovation",
+    voicePersona: "Supportive Comedian"
+  },
+  {
+    name: "Customer Support Expert",
+    role: "Customer Success Director",
+    style: "Empathetic, user-centric, problem-solver",
+    focus: "User support, customer journey, satisfaction, retention",
+    voicePersona: "Zen Mentor"
+  },
+  {
+    name: "Generalist Judge",
+    role: "Seasoned CEO",
+    style: "Balanced, strategic, big-picture thinker",
+    focus: "Overall viability, strategy, execution, team dynamics",
+    voicePersona: "Middle-Aged CEO"
   }
 ] as const;
 

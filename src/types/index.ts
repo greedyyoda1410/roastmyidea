@@ -16,6 +16,7 @@ export interface JudgeResponse {
 }
 
 export interface MultiJudgeResponse {
+  id: string;
   judges: Array<{
     name: string;
     response: JudgeResponse;

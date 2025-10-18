@@ -286,6 +286,7 @@ export default function Home() {
                     name={judge.name}
                     response={judge.response}
                     isVisible={index < visibleJudges}
+                    roastId={roastResult.id}
                   />
                 ))}
               </div>

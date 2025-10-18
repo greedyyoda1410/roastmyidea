@@ -8,9 +8,10 @@ interface JudgeCardProps {
   name: string;
   response: JudgeResponse;
   isVisible: boolean;
+  roastId?: string;
 }
 
-export default function JudgeCard({ name, response, isVisible }: JudgeCardProps) {
+export default function JudgeCard({ name, response, isVisible, roastId }: JudgeCardProps) {
   const getScoreColor = (score: number) => {
     if (score >= 8) return 'text-success';
     if (score >= 6) return 'text-warning';
@@ -125,7 +126,7 @@ export default function JudgeCard({ name, response, isVisible }: JudgeCardProps)
       </div>
 
       {/* Voice Player */}
-      <VoicePlayer text={response.roast} judgeName={name} />
+      <VoicePlayer text={response.roast} judgeName={name} roastId={roastId} />
     </div>
   );
 }
