@@ -3,16 +3,33 @@
 import { supabase } from './supabase';
 import type { User } from '@supabase/supabase-js';
 
-export async function signInWithGoogle() {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
+export async function signInWithEmail(email: string, password: string) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    console.error('Error signing in:', error);
+    throw error;
+  }
+
+  return data;
+}
+
+export async function signUpWithEmail(email: string, password: string, fullName: string) {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
     options: {
-      redirectTo: `${window.location.origin}/auth/callback`,
+      data: {
+        full_name: fullName,
+      },
     },
   });
 
   if (error) {
-    console.error('Error signing in with Google:', error);
+    console.error('Error signing up:', error);
     throw error;
   }
 

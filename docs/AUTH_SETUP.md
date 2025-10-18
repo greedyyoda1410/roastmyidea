@@ -2,79 +2,39 @@
 
 ## Overview
 
-RoastMyIdea.AI supports optional Google OAuth authentication. Users can use the app without signing in, but authenticated users get additional benefits:
+RoastMyIdea.AI supports optional email/password authentication via Supabase. Users can use the app without signing in, but authenticated users get additional benefits:
 
 - ✅ Roasts are associated with their profile
 - ✅ File uploads are linked to their account
 - ✅ Can view their roast history (future feature)
 - ✅ Profile displayed on leaderboard (optional)
 
-## Supabase Auth Setup (5 Minutes)
+## Supabase Email Auth Setup (2 Minutes)
 
-### Step 1: Enable Google OAuth in Supabase
+### Step 1: Enable Email Authentication
+
+**Good news:** Email authentication is enabled by default in Supabase! No configuration needed.
+
+### Step 2: Configure Email Templates (Optional)
 
 1. Go to your Supabase Dashboard: https://supabase.com/dashboard/project/wmjkfjcmtimhrmujkbbc
 
-2. Navigate to **Authentication** → **Providers** in the left sidebar
+2. Navigate to **Authentication** → **Email Templates**
 
-3. Find **Google** in the list of providers and click to expand
+3. Customize the confirmation email template if desired (or keep default)
 
-4. Click **Enable** toggle
-
-### Step 2: Configure Google OAuth Credentials
-
-You have two options:
-
-#### Option A: Use Supabase's Google OAuth (Quickest)
-
-1. In the Google provider settings, scroll down
-2. You'll see Supabase's default Google OAuth client
-3. Click **Save** - you're done! (Uses Supabase's credentials)
-
-#### Option B: Use Your Own Google OAuth Credentials (Recommended for Production)
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com)
-
-2. Create a new project or select an existing one
-
-3. Enable Google+ API:
-   - Go to **APIs & Services** → **Library**
-   - Search for "Google+ API"
-   - Click **Enable**
-
-4. Create OAuth credentials:
-   - Go to **APIs & Services** → **Credentials**
-   - Click **Create Credentials** → **OAuth client ID**
-   - Select **Web application**
-   - Add authorized redirect URIs:
-     ```
-     https://wmjkfjcmtimhrmujkbbc.supabase.co/auth/v1/callback
-     http://localhost:3000/auth/callback
-     ```
-   - Click **Create**
-
-5. Copy the Client ID and Client Secret
-
-6. Back in Supabase Google Provider settings:
-   - Paste **Client ID**
-   - Paste **Client Secret**
-   - Click **Save**
-
-### Step 3: Configure Redirect URLs
-
-In Supabase Authentication settings:
+### Step 3: Configure URL Settings
 
 1. Go to **Authentication** → **URL Configuration**
 
-2. Add site URL:
+2. Set **Site URL** to:
    ```
    http://localhost:3000
    ```
 
-3. Add redirect URLs:
+3. Under **Redirect URLs**, add:
    ```
-   http://localhost:3000/auth/callback
-   https://your-production-domain.vercel.app/auth/callback
+   http://localhost:3000/**
    ```
 
 4. Click **Save**
@@ -88,32 +48,55 @@ In Supabase Authentication settings:
 
 2. Visit http://localhost:3000
 
-3. Click **"Sign in with Google"** in the top right
+3. Click **"Sign In"** in the top right
 
-4. You should be redirected to Google sign-in
+4. Click **"Need an account? Sign Up"**
 
-5. After signing in, you should be redirected back to the app
+5. Enter your details:
+   - Full Name
+   - Email
+   - Password (minimum 6 characters)
 
-6. Your profile picture and name should appear in the header
+6. Click **"Sign Up"**
+
+7. Check your email for confirmation link
+
+8. Click the link to verify your account
+
+9. Return to the app and sign in with your credentials
+
+10. Your name should appear in the header!
 
 ## How It Works
 
 ### User Flow
 
+**Sign Up:**
 ```
-[User clicks "Sign in with Google"]
+[User clicks "Sign In" → "Need an account? Sign Up"]
          ↓
-[Redirected to Google OAuth]
+[Enters full name, email, password]
          ↓
-[User authorizes the app]
+[Clicks "Sign Up"]
          ↓
-[Redirected to /auth/callback]
+[Supabase sends confirmation email]
          ↓
-[Session exchanged and stored]
+[User clicks email link to verify]
          ↓
-[Redirected back to home page]
+[Account activated]
+```
+
+**Sign In:**
+```
+[User clicks "Sign In"]
          ↓
-[AuthButton shows user profile]
+[Enters email and password]
+         ↓
+[Clicks "Sign In"]
+         ↓
+[Session created and stored]
+         ↓
+[Modal closes, profile appears in header]
 ```
 
 ### Code Architecture
@@ -121,8 +104,11 @@ In Supabase Authentication settings:
 #### Auth Functions (`src/lib/auth.ts`)
 
 ```typescript
-// Sign in with Google
-signInWithGoogle() → redirects to Google OAuth
+// Sign in with email/password
+signInWithEmail(email, password) → creates session
+
+// Sign up with email/password
+signUpWithEmail(email, password, fullName) → creates account
 
 // Sign out
 signOut() → clears session
@@ -187,12 +173,12 @@ CREATE POLICY "Allow users to update own roasts" ON roasts
 
 ## Troubleshooting
 
-### "Sign in with Google" button doesn't work
+### "Sign In" button doesn't work
 
-1. Check that Google provider is enabled in Supabase
-2. Verify redirect URLs are configured correctly
+1. Check that email authentication is enabled in Supabase (it's on by default)
+2. Verify Supabase URL and keys in `.env.local`
 3. Check browser console for errors
-4. Ensure `.env.local` has correct Supabase credentials
+4. Make sure development server is running
 
 ### User doesn't stay signed in
 
@@ -200,11 +186,12 @@ CREATE POLICY "Allow users to update own roasts" ON roasts
 2. Verify Supabase URL is correct
 3. Check that session is being stored correctly
 
-### OAuth redirect error
+### Email confirmation not received
 
-1. Verify redirect URI in Google Cloud Console matches Supabase
-2. Check that callback route exists at `/auth/callback`
-3. Ensure Supabase Auth is properly configured
+1. Check spam/junk folder
+2. Verify email is correct
+3. Check Supabase Email Templates are configured
+4. For development, you can disable email confirmation in Supabase settings
 
 ## Testing Authentication
 
@@ -216,7 +203,9 @@ CREATE POLICY "Allow users to update own roasts" ON roasts
    - Verify it works without authentication
 
 2. **Test authenticated flow:**
-   - Sign in with Google
+   - Click "Sign In" and create account
+   - Verify confirmation email
+   - Sign in with credentials
    - Submit a roast
    - Verify user profile appears in header
    - Check database to see user_id is associated
