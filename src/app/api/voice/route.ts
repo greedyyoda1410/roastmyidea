@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getVoiceByPersona, getDefaultVoiceId } from '@/lib/voices';
 import { JUDGE_PERSONAS } from '@/lib/constants';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
