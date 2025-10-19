@@ -22,7 +22,7 @@ export async function generateRoast(
   agentAnalysis?: string
 ): Promise<JudgeResponse> {
   const genAI = getGenAI();
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
 
   const prompt = `
 You are ${persona.name}, a ${persona.role} at a hackathon judging panel.
@@ -105,7 +105,7 @@ Respond with ONLY the JSON object, no additional text.
 
 export async function moderateContent(idea: string): Promise<boolean> {
   const genAI = getGenAI();
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
   
   const prompt = `
 Analyze this startup idea for inappropriate content. Return only "SAFE" or "UNSAFE".
