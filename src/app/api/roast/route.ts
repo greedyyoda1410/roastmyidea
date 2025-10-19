@@ -137,9 +137,9 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('[Roast API] Saving to database');
-    // Save to database
+    // Save to database (temporarily skip userId until schema is fixed)
     const roastData = {
-      userId: userId || null,
+      // userId: userId || null, // Temporarily commented out
       projectName: projectName,
       ideaText: idea,
       toneHumor: tone.humor,
