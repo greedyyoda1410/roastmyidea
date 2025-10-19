@@ -31,6 +31,22 @@ export async function POST(request: NextRequest) {
     const voiceMapping = getVoiceByPersona();
     const voiceId = voiceMapping[voicePersona] || getDefaultVoiceId();
 
+    // Validate voice ID is configured
+    if (!voiceId || voiceId.trim() === '') {
+      console.error(`Voice ID not configured for: ${voicePersona}`);
+      console.error('Available voice mappings:', voiceMapping);
+      return NextResponse.json(
+        { 
+          error: 'Voice ID not configured', 
+          message: `Voice synthesis is not configured for ${voicePersona}. Please set the environment variable for this judge's voice ID in Vercel.`,
+          missingEnvVar: `VOICE_ID_${voicePersona.toUpperCase().replace(/\s+/g, '_').replace(/-/g, '_')}`
+        },
+        { status: 503 }
+      );
+    }
+
+    console.log(`[Voice API] Using voice ID for ${voicePersona}: ${voiceId.substring(0, 8)}...`);
+
     // Call ElevenLabs API
     const response = await fetch(
       `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
