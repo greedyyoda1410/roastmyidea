@@ -83,18 +83,27 @@ After redeployment:
 3. Click "Play Voice Roast"
 4. Should work! 🎉
 
-## If You Already Had Voice IDs
+## If You Already Had Voice IDs ✅
 
-If you had voice IDs set up for the OLD judge names, you need to **rename** the environment variables:
+**Good news!** The code now supports **backwards compatibility**!
 
-**Old Names → New Names:**
-- `VOICE_ID_TECHNICAL_JUDGE` → `VOICE_ID_TECH_BRO`
-- `VOICE_ID_BUSINESS_JUDGE` → `VOICE_ID_BRUTAL_VC`
-- `VOICE_ID_CREATIVE_JUDGE` → `VOICE_ID_SUPPORTIVE_COMEDIAN`
-- `VOICE_ID_CUSTOMER_SUPPORT` → `VOICE_ID_ZEN_MENTOR`
-- `VOICE_ID_GENERALIST` → `VOICE_ID_CEO`
+If you had voice IDs set up for the OLD judge names, they will **still work**! The code checks for both old and new variable names:
 
-You can use the same voice IDs, just update the variable names.
+**Old Names (still work):**
+- `VOICE_ID_TECHNICAL_JUDGE` or `VOICE_ID_TECHNICAL`
+- `VOICE_ID_BUSINESS_JUDGE` or `VOICE_ID_BUSINESS`
+- `VOICE_ID_CREATIVE_JUDGE` or `VOICE_ID_CREATIVE`
+- `VOICE_ID_CUSTOMER_SUPPORT` or `VOICE_ID_SUPPORT`
+- `VOICE_ID_GENERALIST_JUDGE` or `VOICE_ID_GENERALIST`
+
+**New Names (preferred):**
+- `VOICE_ID_TECH_BRO`
+- `VOICE_ID_BRUTAL_VC`
+- `VOICE_ID_SUPPORTIVE_COMEDIAN`
+- `VOICE_ID_ZEN_MENTOR`
+- `VOICE_ID_CEO`
+
+**You don't need to change anything in Vercel** - the old variable names will continue to work!
 
 ## Still Having Issues?
 
