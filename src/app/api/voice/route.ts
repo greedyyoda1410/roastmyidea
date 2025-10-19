@@ -28,18 +28,33 @@ export async function POST(request: NextRequest) {
     // Find the judge persona and get voice ID
     const judge = JUDGE_PERSONAS.find(j => j.name === judgeName);
     const voicePersona = judge?.voicePersona || "Tech Bro 3000";
+    
+    console.log(`[Voice API] Looking for voice for: ${voicePersona}`);
+    console.log(`[Voice API] Judge found:`, judge ? 'Yes' : 'No');
+    
+    // Check all possible environment variables
+    console.log('[Voice API] Environment variable check:');
+    console.log('- VOICE_ID_TECH_BRO:', process.env.VOICE_ID_TECH_BRO ? 'SET' : 'NOT SET');
+    console.log('- VOICE_ID_TECHNICAL_JUDGE:', process.env.VOICE_ID_TECHNICAL_JUDGE ? 'SET' : 'NOT SET');
+    console.log('- VOICE_ID_TECHNICAL:', process.env.VOICE_ID_TECHNICAL ? 'SET' : 'NOT SET');
+    console.log('- VOICE_ID_BRUTAL_VC:', process.env.VOICE_ID_BRUTAL_VC ? 'SET' : 'NOT SET');
+    console.log('- VOICE_ID_BUSINESS_JUDGE:', process.env.VOICE_ID_BUSINESS_JUDGE ? 'SET' : 'NOT SET');
+    console.log('- VOICE_ID_BUSINESS:', process.env.VOICE_ID_BUSINESS ? 'SET' : 'NOT SET');
+    
     const voiceMapping = getVoiceByPersona();
     const voiceId = voiceMapping[voicePersona] || getDefaultVoiceId();
+    
+    console.log(`[Voice API] Voice mapping result for ${voicePersona}:`, voiceId ? `${voiceId.substring(0, 8)}...` : 'EMPTY');
 
     // Validate voice ID is configured
     if (!voiceId || voiceId.trim() === '') {
-      console.error(`Voice ID not configured for: ${voicePersona}`);
-      console.error('Available voice mappings:', voiceMapping);
+      console.error(`[Voice API] Voice ID not configured for: ${voicePersona}`);
+      console.error('[Voice API] All voice mappings:', JSON.stringify(voiceMapping, null, 2));
       return NextResponse.json(
         { 
           error: 'Voice ID not configured', 
-          message: `Voice synthesis is not configured for ${voicePersona}. Please set the environment variable for this judge's voice ID in Vercel.`,
-          missingEnvVar: `VOICE_ID_${voicePersona.toUpperCase().replace(/\s+/g, '_').replace(/-/g, '_')}`
+          message: `Voice synthesis is not configured for ${voicePersona}. Please check your Vercel environment variables. Expected one of: VOICE_ID_TECH_BRO, VOICE_ID_TECHNICAL_JUDGE, or VOICE_ID_TECHNICAL`,
+          details: 'Check Vercel logs for which environment variables are missing'
         },
         { status: 503 }
       );
