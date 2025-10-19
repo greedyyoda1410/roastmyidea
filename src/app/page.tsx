@@ -8,13 +8,16 @@ import IdeaInput from '@/components/IdeaInput';
 import ProjectNameInput from '@/components/ProjectNameInput';
 import FileUpload from '@/components/FileUpload';
 import ToneMatrix from '@/components/ToneMatrix';
+import JudgeSelector from '@/components/JudgeSelector';
 import ErrorDisplay from '@/components/ErrorDisplay';
 import JudgeCard from '@/components/JudgeCard';
 import Leaderboard from '@/components/Leaderboard';
 import AuthButton from '@/components/AuthButton';
 import { getCurrentUser } from '@/lib/auth';
+import { JUDGE_PERSONAS } from '@/lib/constants';
 import { type ToneMatrix as ToneMatrixType, type ErrorType, type MultiJudgeResponse } from '@/types';
 import type { User } from '@supabase/supabase-js';
+import type { JudgePersona } from '@/lib/constants';
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
@@ -27,6 +30,7 @@ export default function Home() {
     repoLink: ''
   });
   const [tone, setTone] = useState<ToneMatrixType>({ humor: 0.7, sarcasm: 0.2 });
+  const [selectedJudge, setSelectedJudge] = useState<JudgePersona>(JUDGE_PERSONAS[0]);
   const [isProjectNameValid, setIsProjectNameValid] = useState(false);
   const [isIdeaValid, setIsIdeaValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,6 +43,10 @@ export default function Home() {
   useEffect(() => {
     // Get current user on mount
     getCurrentUser().then(setUser);
+    
+    // Set random default judge
+    const randomIndex = Math.floor(Math.random() * JUDGE_PERSONAS.length);
+    setSelectedJudge(JUDGE_PERSONAS[randomIndex]);
   }, []);
 
   const handleSubmit = async () => {
@@ -93,6 +101,7 @@ export default function Home() {
           projectName,
           idea, 
           tone,
+          selectedJudge: selectedJudge.name,
           userId: user?.id || null,
           agentAnalysis: agentAnalysis || undefined
         }),
@@ -210,6 +219,12 @@ export default function Home() {
               <div className="flex justify-center">
                 <ToneMatrix value={tone} onChange={setTone} />
               </div>
+
+              {/* Judge Selection */}
+              <JudgeSelector 
+                selectedJudge={selectedJudge}
+                onJudgeSelect={setSelectedJudge}
+              />
 
               {/* Submit Button */}
               <div className="flex justify-center">

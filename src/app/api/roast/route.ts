@@ -10,7 +10,7 @@ export const runtime = 'nodejs';
 export async function POST(request: NextRequest) {
   try {
     console.log('[Roast API] Request received');
-    const { projectName, idea, tone, userId, agentAnalysis } = await request.json();
+    const { projectName, idea, tone, selectedJudge, userId, agentAnalysis } = await request.json();
 
     // Validate project name
     if (!projectName || typeof projectName !== 'string' || projectName.trim().length === 0) {
@@ -50,96 +50,75 @@ export async function POST(request: NextRequest) {
     }
     console.log('[Roast API] Content moderation passed');
 
-    // Check if multi-judge is enabled
-    const enableMultiJudge = process.env.ENABLE_MULTI_JUDGE === 'true';
-    console.log('[Roast API] Multi-judge mode:', enableMultiJudge);
+    // Single judge mode - use selected judge
+    console.log('[Roast API] Single judge mode - selected:', selectedJudge);
     
-    const judgeResults = [];
+    // Find the selected judge persona
+    const judge = JUDGE_PERSONAS.find(j => j.name === selectedJudge);
     
-    if (enableMultiJudge) {
-      console.log('[Roast API] Generating roasts from 3 judges');
-      // Generate roasts from all 3 judges sequentially
-      for (const judge of JUDGE_PERSONAS) {
-        console.log(`[Roast API] Generating roast from: ${judge.name}`);
-        // Apply slight tone variations per judge
-        const judgeTone: ToneMatrix = {
-          humor: judge.name === 'Business Judge' ? tone.humor + 0.1 : tone.humor,
-          sarcasm: judge.name === 'Technical Judge' ? tone.sarcasm + 0.2 : 
-                   judge.name === 'Creative Judge' ? tone.sarcasm - 0.1 : tone.sarcasm
-        };
-        
-        // Clamp values
-        judgeTone.humor = Math.max(0, Math.min(1, judgeTone.humor));
-        judgeTone.sarcasm = Math.max(-1, Math.min(1, judgeTone.sarcasm));
-        
-        try {
-          const judgeResponse = await generateRoast(idea, judgeTone, judge, agentAnalysis);
-          console.log(`[Roast API] Successfully generated roast from: ${judge.name}`);
-          judgeResults.push({
-            name: judge.name,
-            response: judgeResponse
-          });
-        } catch (error) {
-          console.error(`[Roast API] Failed to generate roast from ${judge.name}:`, error);
-          throw error; // Re-throw to be caught by main catch block
-        }
-      }
-    } else {
-      console.log('[Roast API] Generating roast from single judge');
-      // Single judge mode (Technical Judge only)
-      const technicalJudge = JUDGE_PERSONAS[0];
-      const judgeResponse = await generateRoast(idea, tone as ToneMatrix, technicalJudge, agentAnalysis);
-      console.log('[Roast API] Successfully generated single judge roast');
-      judgeResults.push({
-        name: technicalJudge.name,
+    if (!judge) {
+      console.log('[Roast API] Invalid judge selected, defaulting to first judge');
+      // Fallback to first judge if invalid name provided
+      const defaultJudge = JUDGE_PERSONAS[0];
+      const judgeResponse = await generateRoast(idea, tone as ToneMatrix, defaultJudge, agentAnalysis);
+      console.log('[Roast API] Successfully generated roast from default judge');
+      const judgeResults = [{
+        name: defaultJudge.name,
         response: judgeResponse
-      });
-    }
-
-    // Calculate aggregated scores and final verdict
-    const aggregatedScores = {
-      originality: 0,
-      feasibility: 0,
-      wow_factor: 0,
-      market_potential: 0
-    };
-    
-    let passCount = 0;
-    let failCount = 0;
-    let maybeCount = 0;
-    
-    judgeResults.forEach(judge => {
-      aggregatedScores.originality += judge.response.scores.originality;
-      aggregatedScores.feasibility += judge.response.scores.feasibility;
-      aggregatedScores.wow_factor += judge.response.scores.wow_factor;
-      aggregatedScores.market_potential += judge.response.scores.market_potential;
+      }];
       
-      if (judge.response.verdict === 'PASS') passCount++;
-      else if (judge.response.verdict === 'FAIL') failCount++;
-      else maybeCount++;
-    });
-    
-    // Average the scores
-    const judgeCount = judgeResults.length;
-    aggregatedScores.originality = Math.round((aggregatedScores.originality / judgeCount) * 10) / 10;
-    aggregatedScores.feasibility = Math.round((aggregatedScores.feasibility / judgeCount) * 10) / 10;
-    aggregatedScores.wow_factor = Math.round((aggregatedScores.wow_factor / judgeCount) * 10) / 10;
-    aggregatedScores.market_potential = Math.round((aggregatedScores.market_potential / judgeCount) * 10) / 10;
-    
-    // Determine final verdict by majority
-    let finalVerdict: 'PASS' | 'FAIL' | 'MAYBE';
-    if (passCount > failCount && passCount > maybeCount) {
-      finalVerdict = 'PASS';
-    } else if (failCount > passCount && failCount > maybeCount) {
-      finalVerdict = 'FAIL';
-    } else {
-      finalVerdict = 'MAYBE';
+      // Continue with single judge flow
+      const aggregatedScores = judgeResponse.scores;
+      const finalVerdict = judgeResponse.verdict;
+      
+      console.log('[Roast API] Saving to database');
+      const roastData = {
+        userId: userId || null,
+        projectName: projectName,
+        ideaText: idea,
+        toneHumor: tone.humor,
+        toneSarcasm: tone.sarcasm,
+        judgesData: { judges: judgeResults },
+        finalVerdict: finalVerdict,
+        scores: aggregatedScores,
+      };
+
+      try {
+        const [savedRoast] = await db.insert(roasts).values(roastData).returning();
+        console.log('[Roast API] Successfully saved to database, ID:', savedRoast.id);
+
+        return NextResponse.json({
+          success: true,
+          roast: {
+            id: savedRoast.id,
+            judges: judgeResults,
+            finalVerdict: finalVerdict,
+            aggregatedScores: aggregatedScores,
+          }
+        });
+      } catch (dbError) {
+        console.error('[Roast API] Database save failed:', dbError);
+        throw dbError;
+      }
     }
+    
+    console.log(`[Roast API] Generating roast from: ${judge.name}`);
+    const judgeResponse = await generateRoast(idea, tone as ToneMatrix, judge, agentAnalysis);
+    console.log('[Roast API] Successfully generated single judge roast');
+    
+    const judgeResults = [{
+      name: judge.name,
+      response: judgeResponse
+    }];
+
+    // Single judge - use their scores and verdict directly
+    const aggregatedScores = judgeResponse.scores;
+    const finalVerdict = judgeResponse.verdict;
 
     console.log('[Roast API] Saving to database');
-    // Save to database (temporarily skip userId until schema is fixed)
+    // Save to database
     const roastData = {
-      // userId: userId || null, // Temporarily commented out
+      userId: userId || null, // Optional - null for anonymous users
       projectName: projectName,
       ideaText: idea,
       toneHumor: tone.humor,

@@ -33,38 +33,43 @@ export const ERROR_TYPES = {
 
 export const JUDGE_PERSONAS = [
   {
-    name: "Technical Judge",
+    name: "Tech Bro 3000",
     role: "Senior Engineer",
     style: "Analytical, detail-oriented, loves clean code",
     focus: "Technical feasibility, architecture, scalability",
+    expertise: "Technical side - architecture, scalability, code quality, tech stack decisions",
     voicePersona: "Tech Bro 3000"
   },
   {
-    name: "Business Judge",
+    name: "Brutal VC",
     role: "VC Partner",
     style: "Market-focused, ROI-driven, loves big numbers",
-    focus: "Market size, business model, competitive advantage",
+    focus: "Investment, valuation, market analysis",
+    expertise: "Investment and Valuation side - funding potential, market size, ROI, investor appeal",
     voicePersona: "Brutal VC"
   },
   {
-    name: "Creative Judge",
+    name: "Supportive Comedian",
     role: "Design Director",
     style: "User-obsessed, aesthetic-focused, loves innovation",
-    focus: "User experience, design, creativity, innovation",
+    focus: "Creative aspects, user experience, innovation",
+    expertise: "Creative side - design, user experience, innovation, aesthetic appeal",
     voicePersona: "Supportive Comedian"
   },
   {
-    name: "Customer Support Expert",
+    name: "Zen Mentor",
     role: "Customer Success Director",
     style: "Empathetic, user-centric, problem-solver",
-    focus: "User support, customer journey, satisfaction, retention",
+    focus: "Customer experience, operations, support",
+    expertise: "Customer Experience and Operations side - user support, satisfaction, customer journey, operational efficiency",
     voicePersona: "Zen Mentor"
   },
   {
-    name: "Generalist Judge",
+    name: "Middle-Aged CEO",
     role: "Seasoned CEO",
     style: "Balanced, strategic, big-picture thinker",
-    focus: "Overall viability, strategy, execution, team dynamics",
+    focus: "Business viability, profitability, strategy",
+    expertise: "Business and Profitability side - revenue model, sustainability, strategic execution, market fit",
     voicePersona: "Middle-Aged CEO"
   }
 ] as const;
