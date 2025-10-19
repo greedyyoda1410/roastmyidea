@@ -4,7 +4,15 @@ import { JUDGE_PERSONAS } from './constants';
 
 // Lazy initialization to avoid build-time errors
 function getGenAI() {
-  return new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || '');
+  const apiKey = process.env.GOOGLE_API_KEY;
+  
+  if (!apiKey) {
+    console.error('[Gemini] GOOGLE_API_KEY is missing from environment variables');
+    throw new Error('GOOGLE_API_KEY environment variable is not set');
+  }
+  
+  console.log('[Gemini] API key present, length:', apiKey.length);
+  return new GoogleGenerativeAI(apiKey);
 }
 
 export async function generateRoast(
@@ -59,24 +67,39 @@ Respond with ONLY the JSON object, no additional text.
 `;
 
   try {
+    console.log(`[Gemini] Generating content for ${persona.name}`);
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
+    console.log(`[Gemini] Received response, length: ${text.length}`);
     
     // Clean up the response text
     const cleanedText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    console.log(`[Gemini] Cleaned response, attempting to parse JSON`);
     
-    const parsedResponse = JSON.parse(cleanedText);
+    let parsedResponse;
+    try {
+      parsedResponse = JSON.parse(cleanedText);
+    } catch (parseError) {
+      console.error('[Gemini] JSON parse error. Raw response:', text.substring(0, 500));
+      console.error('[Gemini] Cleaned response:', cleanedText.substring(0, 500));
+      throw new Error(`Failed to parse Gemini response as JSON: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
+    }
     
     // Validate the response structure
     if (!parsedResponse.scores || !parsedResponse.roast || !parsedResponse.feedback || !parsedResponse.verdict) {
+      console.error('[Gemini] Invalid response structure:', parsedResponse);
       throw new Error('Invalid response structure from Gemini');
     }
     
+    console.log(`[Gemini] Successfully generated and validated roast for ${persona.name}`);
     return parsedResponse as JudgeResponse;
   } catch (error) {
-    console.error('Error generating roast:', error);
-    throw new Error('Failed to generate roast');
+    console.error(`[Gemini] Error generating roast for ${persona.name}:`, error);
+    if (error instanceof Error && error.message.includes('API key')) {
+      throw new Error('Gemini API authentication failed. Please check your GOOGLE_API_KEY.');
+    }
+    throw error;
   }
 }
 
