@@ -176,7 +176,8 @@ export default function Home() {
               </h1>
             </div>
             <div className="flex-1 flex justify-end">
-              <AuthButton />
+              {/* Sign In button hidden as per requirements */}
+              {/* <AuthButton /> */}
             </div>
           </div>
           <div className="text-center">
@@ -215,16 +216,16 @@ export default function Home() {
               {/* File Upload */}
               <FileUpload onFilesChange={setFiles} />
 
-              {/* Tone Matrix */}
-              <div className="flex justify-center">
-                <ToneMatrix value={tone} onChange={setTone} />
-              </div>
-
-              {/* Judge Selection */}
+              {/* Judge Selection - Moved before Tone Matrix */}
               <JudgeSelector 
                 selectedJudge={selectedJudge}
                 onJudgeSelect={setSelectedJudge}
               />
+
+              {/* Tone Matrix */}
+              <div className="flex justify-center">
+                <ToneMatrix value={tone} onChange={setTone} />
+              </div>
 
               {/* Submit Button */}
               <div className="flex justify-center">
@@ -279,14 +280,38 @@ export default function Home() {
                   <h2 className="text-3xl font-bold text-foreground mb-4 glow-text">
                     🎉 FINAL VERDICT 🎉
                   </h2>
-                  <div className={`
-                    inline-block px-10 py-5 rounded-2xl border-4 font-mono text-2xl font-bold
-                    transform transition-all duration-500 hover:scale-110 spotlight-glow
-                    ${roastResult.finalVerdict === 'PASS' ? 'text-success border-success bg-success/20' :
-                      roastResult.finalVerdict === 'FAIL' ? 'text-danger border-danger bg-danger/20' :
-                      'text-warning border-warning bg-warning/20'}
-                  `}>
-                    {roastResult.finalVerdict}
+                  {/* Display all verdicts with highlight on actual result */}
+                  <div className="flex items-center justify-center gap-4">
+                    {/* PASS */}
+                    <div className={`
+                      px-8 py-4 rounded-2xl border-4 font-mono text-xl font-bold
+                      transform transition-all duration-500
+                      ${roastResult.finalVerdict === 'PASS' 
+                        ? 'text-success border-success bg-success/20 scale-110 spotlight-glow animate-pulse' 
+                        : 'text-success/30 border-success/30 bg-success/5 scale-90 opacity-50'}
+                    `}>
+                      PASS
+                    </div>
+                    {/* MAYBE */}
+                    <div className={`
+                      px-8 py-4 rounded-2xl border-4 font-mono text-xl font-bold
+                      transform transition-all duration-500
+                      ${roastResult.finalVerdict === 'MAYBE' 
+                        ? 'text-warning border-warning bg-warning/20 scale-110 spotlight-glow animate-pulse' 
+                        : 'text-warning/30 border-warning/30 bg-warning/5 scale-90 opacity-50'}
+                    `}>
+                      MAYBE
+                    </div>
+                    {/* FAIL */}
+                    <div className={`
+                      px-8 py-4 rounded-2xl border-4 font-mono text-xl font-bold
+                      transform transition-all duration-500
+                      ${roastResult.finalVerdict === 'FAIL' 
+                        ? 'text-danger border-danger bg-danger/20 scale-110 spotlight-glow animate-pulse' 
+                        : 'text-danger/30 border-danger/30 bg-danger/5 scale-90 opacity-50'}
+                    `}>
+                      FAIL
+                    </div>
                   </div>
                   {roastResult.judges.length > 1 && (
                     <p className="text-sm text-muted-foreground mt-4">
@@ -329,10 +354,10 @@ export default function Home() {
             </div>
           )}
 
-          {/* Leaderboard */}
-          <div className="mt-16">
+          {/* Leaderboard - Hidden as per requirements */}
+          {/* <div className="mt-16">
             <Leaderboard />
-          </div>
+          </div> */}
         </div>
       </main>
 

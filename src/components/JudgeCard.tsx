@@ -117,6 +117,11 @@ export default function JudgeCard({ name, response, isVisible, roastId }: JudgeC
         </p>
       </div>
 
+      {/* Voice Player - Centered between Roast and Feedback */}
+      <div className="flex justify-center my-6">
+        <VoicePlayer text={response.roast} judgeName={name} roastId={roastId} />
+      </div>
+
       {/* Feedback */}
       <div>
         <h4 className="text-sm font-medium text-muted-foreground mb-2">Constructive Feedback</h4>
@@ -124,9 +129,6 @@ export default function JudgeCard({ name, response, isVisible, roastId }: JudgeC
           {response.feedback}
         </p>
       </div>
-
-      {/* Voice Player */}
-      <VoicePlayer text={response.roast} judgeName={name} roastId={roastId} />
     </div>
   );
 }
